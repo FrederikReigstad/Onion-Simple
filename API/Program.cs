@@ -1,9 +1,12 @@
 using System.Net.Mime;
 using System.Reflection;
+using Application;
 using Application.DTOs;
+using Application.Interfaces;
 using Application.Validators;
 using AutoMapper;
 using Domain;
+using Domain.Interfaces;
 using FluentValidation;
 using Infrastructure;
 using Microsoft.EntityFrameworkCore;
@@ -28,18 +31,15 @@ var mapper = new MapperConfiguration(configuration =>
 }).CreateMapper();
 builder.Services.AddSingleton(mapper);
 
-builder.Services.AddDbContext<ProductDbContext>(options => options.UseSqlite(
+builder.Services.AddDbContext<DatabaseContext>(options => options.UseSqlite(
     "Data source=db.db"
     ));
 
 
-Application.DependencyResolver
-    .DependencyResolverService
-    .RegisterApplicationLayer(builder.Services);
+builder.Services.AddScoped<IProductService, ProductService>();
 
-Infrastructure.DependencyResolver
-    .DependencyResolverService
-    .RegisterInfrastructure(builder.Services);
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IProductRepository, ProductRepository>();
 
 builder.Services.AddCors();
 
